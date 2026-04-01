@@ -23,11 +23,14 @@
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Shift + Cmd + C` | Capture text from screen (OCR) |
-| `Shift + Cmd + V` | Ghost type clipboard contents |
-| `Esc` | Stop typing |
+|  | Normal | Ghost |
+|--|--------|-------|
+| **Copy** | `Cmd + C` | `Shift + Cmd + C` — OCR capture from screen |
+| **Paste** | `Cmd + V` | `Shift + Cmd + V` — Types out character-by-character |
+
+Press `Esc` to stop ghost typing.
+
+Use Ghost Paste when normal paste is blocked or detected.
 
 ## Install
 
