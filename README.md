@@ -87,4 +87,4 @@ Sources/GhostType/
 
 ## License
 
-Free to use. Not for sale or redistribution. See [LICENSE](LICENSE).
+[CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)
