@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="Sources/GhostType/Resources/AppIcon.png" width="400px" alt="GhostType">
+  <img src="Sources/GhostType/Resources/AppIcon.png" width="800px" alt="GhostType">
 </p>
-
-<h1 align="center">GhostType</h1>
 
 <p align="center">
   A macOS menu bar app that captures text from your screen and types it out character-by-character.
