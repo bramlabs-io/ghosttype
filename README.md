@@ -14,7 +14,7 @@
 
 ## Why GhostType?
 
-Ever tried to paste a command into a VM console, remote desktop, or legacy application that doesn't support clipboard sharing? GhostType solves this by simulating real keyboard input — character by character. It also captures text from anywhere on your screen using OCR, so you can "copy" text from images, videos, or unselectable UI elements.
+Ever tried to paste a command into a VM console, remote desktop, or legacy application that doesn't support clipboard sharing? GhostType solves this by simulating real keyboard input — character by character. It also captures text from anywhere on your screen using OCR, so you can "copy" text from images, videos, or unselectable UI elements. 
 
 ## Keyboard Shortcuts
 
