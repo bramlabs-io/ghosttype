@@ -6,10 +6,6 @@
   A sysadmin's dream. Copy and paste text anywhere — even where you can't.
 </p>
 
-<p align="center">
-  <a href="https://github.com/bramlabs-io/ghosttype/releases/latest">Download</a>
-</p>
-
 ---
 
 ## Why GhostType?
