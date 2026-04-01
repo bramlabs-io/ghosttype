@@ -34,15 +34,11 @@ Press `Esc` to stop ghost typing.
 
 ## Install
 
-1. Download the `.dmg` from [Releases](https://github.com/bramlabs-io/ghosttype/releases/latest)
-2. Open the DMG and drag GhostType to Applications
-3. Launch GhostType
-4. Grant Accessibility permissions when prompted
+```bash
+brew install --cask bramlabs-io/ghosttype/ghosttype
+```
 
-> Since this app is unsigned, you need to remove the quarantine attribute after installing:
-> ```bash
-> xattr -cr /Applications/GhostType.app
-> ```
+Then launch GhostType and grant Accessibility permissions when prompted.
 
 ---
 

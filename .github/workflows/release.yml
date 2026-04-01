@@ -34,10 +34,8 @@ jobs:
           body: |
             ## Install
 
-            1. Download the `.dmg` file below
-            2. Open it and drag GhostType to Applications
-            3. Run this command to remove the quarantine attribute:
-               ```bash
-               xattr -cr /Applications/GhostType.app
-               ```
-            4. Launch GhostType and grant Accessibility permissions when prompted
+            ```bash
+            brew install --cask bramlabs-io/ghosttype/ghosttype
+            ```
+
+            Then launch GhostType and grant Accessibility permissions when prompted.
