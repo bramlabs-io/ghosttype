@@ -34,6 +34,9 @@ cp "$PROJECT_DIR/Info.plist" "$APP_BUNDLE/Contents/"
 cp -r "$PROJECT_DIR/Assets.xcassets" "$APP_BUNDLE/Contents/Resources/"
 cp "$PROJECT_DIR/Sources/GhostType/Resources/MenuBarIcon.png" "$APP_BUNDLE/Contents/Resources/"
 
+# Copy SPM resource bundle (required for Bundle.module to work)
+cp -r ".build/release/GhostType_GhostType.bundle" "$APP_BUNDLE/Contents/Resources/"
+
 # Create icns from the PNG icons
 ICONSET_DIR="$BUILD_DIR/AppIcon.iconset"
 mkdir -p "$ICONSET_DIR"
