@@ -28,4 +28,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: build/GhostType-*.dmg
-          generate_release_notes: true
+          body: |
+            ## Install
+
+            Download the `.dmg` file below, open it, and drag GhostType to Applications.
+
+            > Since this app is unsigned, right-click and select "Open" the first time you launch it.
