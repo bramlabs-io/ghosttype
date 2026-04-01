@@ -15,22 +15,26 @@ class PermissionManager {
         let currentHash = getExecutableHash()
         let storedHash = UserDefaults.standard.string(forKey: executableHashKey)
 
-        // Detect if the binary changed (update occurred)
+        // Detect if the binary changed (update occurred) or if this is a fresh install
         let binaryChanged = storedHash != nil && storedHash != currentHash
+        let isFreshInstall = storedHash == nil
 
-        if binaryChanged && !isAccessibilityGranted {
-            // Binary changed and we don't have permission - stale entry exists
-            print("GhostType: Binary changed, resetting stale accessibility permission...")
+        if !isAccessibilityGranted {
+            // Always reset if not trusted - clears any stale entries from previous installs
+            // This is harmless if there's nothing to reset
+            if binaryChanged {
+                print("GhostType: Binary changed, resetting stale accessibility permission...")
+            } else if isFreshInstall {
+                print("GhostType: Fresh install detected, clearing any stale accessibility entries...")
+            } else {
+                print("GhostType: Permission not granted, attempting to clear stale entries...")
+            }
             resetAccessibilityPermission()
+            requestAccessibilityPermission()
         }
 
         // Store current hash for future comparison
         UserDefaults.standard.set(currentHash, forKey: executableHashKey)
-
-        // Check if we need to request permission
-        if !isAccessibilityGranted {
-            requestAccessibilityPermission()
-        }
     }
 
     /// Get a hash of the current executable to detect updates
@@ -83,10 +87,13 @@ class PermissionManager {
             alert.informativeText = """
             GhostType needs Accessibility permission to simulate keyboard input.
 
-            Please grant access in:
-            System Settings > Privacy & Security > Accessibility
+            Steps:
+            1. Open System Settings > Privacy & Security > Accessibility
+            2. If GhostType is already in the list, REMOVE it first (click -, or select and press Delete)
+            3. Click + and add GhostType from Applications
+            4. Make sure the checkbox is enabled
 
-            If GhostType appears multiple times in the list, remove the old entries first (they won't have a checkmark that works).
+            Note: After updates, old entries won't work - you must remove and re-add.
             """
             alert.alertStyle = .warning
             alert.addButton(withTitle: "Open System Settings")
