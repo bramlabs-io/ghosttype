@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Sources/GhostType/Resources/AppIcon.png" width="128" height="128" alt="GhostType">
+  <img src="Sources/GhostType/Resources/AppIcon.png" width="400px" alt="GhostType">
 </p>
 
 <h1 align="center">GhostType</h1>
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/bramlabs-io/ghosttype/releases/latest">Download</a>
+  You can <a href="https://github.com/bramlabs-io/ghosttype/releases/latest">Download</a> installer from Git Releases.
 </p>
 
 ---
@@ -47,10 +47,19 @@
 - macOS 12.0+
 - Xcode Command Line Tools: `xcode-select --install`
 
+### Dev Mode
+
+```bash
+swift build
+./start.sh
+```
+
+Runs the debug build directly without creating an app bundle.
+
 ### Build
 
 ```bash
-# Build the app
+# Build the app bundle
 ./scripts/build-app.sh
 
 # Run it
