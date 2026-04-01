@@ -8,6 +8,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private let ocrService = OCRService()
     private let ghostTyper = GhostTyper()
     private let screenCapture = ScreenCapture()
+    private let permissionManager = PermissionManager()
 
     private var defaultIcon: NSImage?
     private var settingsMenu: NSMenu?
@@ -35,6 +36,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Hide dock icon - we're a menu bar only app
         NSApp.setActivationPolicy(.accessory)
+
+        // Check and handle accessibility permissions (reset stale entries on update)
+        permissionManager.checkAndHandlePermissions()
 
         loadIcons()
         log("Icons loaded: \(defaultIcon != nil ? "yes" : "no")")
@@ -146,6 +150,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         escHint.isEnabled = false
         settingsMenu.addItem(escHint)
 
+        settingsMenu.addItem(NSMenuItem.separator())
+
+        // Permission management
+        settingsMenu.addItem(NSMenuItem(title: "Reset Permissions...", action: #selector(resetPermissions), keyEquivalent: ""))
+
         settingsItem.submenu = settingsMenu
         self.settingsMenu = settingsMenu
         menu.addItem(settingsItem)
@@ -251,6 +260,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 item.state = (item.representedObject as? TypingSpeed) == speed ? .on : .off
             }
         }
+    }
+
+    @objc private func resetPermissions() {
+        permissionManager.resetAndRequestPermissions()
     }
 
     @objc private func quit() {
