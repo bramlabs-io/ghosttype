@@ -7,11 +7,10 @@ class ScreenCapture {
 
         // Use screencapture with interactive selection
         // -i: interactive mode (user selects area)
-        // -s: selection mode (only capture selected area)
         // -x: no sound
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
-        process.arguments = ["-i", "-s", "-x", tempPath]
+        process.arguments = ["-i", "-x", tempPath]
 
         process.terminationHandler = { _ in
             DispatchQueue.main.async {
