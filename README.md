@@ -87,4 +87,4 @@ Sources/GhostType/
 
 ## License
 
-MIT
+Free to use. Not for sale or redistribution. See [LICENSE](LICENSE).
