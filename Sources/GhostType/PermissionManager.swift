@@ -2,8 +2,8 @@ import AppKit
 import ApplicationServices
 
 class PermissionManager {
-    private let bundleIdentifier = "com.ghosttype.app"
     private let executableHashKey = "GhostTypeExecutableHash"
+    private let permissionShownKey = "GhostTypePermissionDialogShown"
 
     /// Check if accessibility permission is granted
     var isAccessibilityGranted: Bool {
@@ -14,27 +14,35 @@ class PermissionManager {
     func checkAndHandlePermissions() {
         let currentHash = getExecutableHash()
         let storedHash = UserDefaults.standard.string(forKey: executableHashKey)
-
-        // Detect if the binary changed (update occurred) or if this is a fresh install
         let binaryChanged = storedHash != nil && storedHash != currentHash
-        let isFreshInstall = storedHash == nil
-
-        if !isAccessibilityGranted {
-            // Always reset if not trusted - clears any stale entries from previous installs
-            // This is harmless if there's nothing to reset
-            if binaryChanged {
-                print("GhostType: Binary changed, resetting stale accessibility permission...")
-            } else if isFreshInstall {
-                print("GhostType: Fresh install detected, clearing any stale accessibility entries...")
-            } else {
-                print("GhostType: Permission not granted, attempting to clear stale entries...")
-            }
-            resetAccessibilityPermission()
-            requestAccessibilityPermission()
-        }
 
         // Store current hash for future comparison
         UserDefaults.standard.set(currentHash, forKey: executableHashKey)
+
+        if isAccessibilityGranted {
+            // Permission granted, clear the "shown" flag for next time
+            UserDefaults.standard.removeObject(forKey: permissionShownKey)
+            return
+        }
+
+        // Not trusted - trigger system prompt (without our own dialog)
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+        AXIsProcessTrustedWithOptions(options)
+
+        // Only show our guidance dialog once per install/update, not every launch
+        let dialogShown = UserDefaults.standard.bool(forKey: permissionShownKey)
+
+        if binaryChanged || !dialogShown {
+            UserDefaults.standard.set(true, forKey: permissionShownKey)
+
+            // Delay our dialog so it doesn't appear on top of system dialog
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                // Check again - user might have granted permission via system dialog
+                if !AXIsProcessTrusted() {
+                    self?.showPermissionAlert(binaryChanged: binaryChanged)
+                }
+            }
+        }
     }
 
     /// Get a hash of the current executable to detect updates
@@ -45,7 +53,6 @@ class PermissionManager {
 
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: executablePath)
-            // Use modification date + size as a simple "hash" to detect changes
             let modDate = attributes[.modificationDate] as? Date ?? Date()
             let size = attributes[.size] as? Int ?? 0
             return "\(modDate.timeIntervalSince1970)-\(size)"
@@ -54,55 +61,43 @@ class PermissionManager {
         }
     }
 
-    /// Reset accessibility permission for this app using tccutil
-    private func resetAccessibilityPermission() {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/tccutil")
-        process.arguments = ["reset", "Accessibility", bundleIdentifier]
-
-        do {
-            try process.run()
-            process.waitUntilExit()
-            print("GhostType: Cleared stale accessibility permission entry")
-        } catch {
-            print("GhostType: Failed to reset accessibility permission: \(error)")
-        }
-    }
-
-    /// Request accessibility permission with system prompt
-    private func requestAccessibilityPermission() {
-        // This will trigger the system prompt if not already trusted
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        AXIsProcessTrustedWithOptions(options)
-
-        // Show alert explaining what to do
-        showPermissionAlert()
-    }
-
     /// Show an alert explaining why permission is needed
-    private func showPermissionAlert() {
-        DispatchQueue.main.async {
-            let alert = NSAlert()
-            alert.messageText = "Accessibility Permission Required"
+    private func showPermissionAlert(binaryChanged: Bool) {
+        let alert = NSAlert()
+        alert.messageText = "Accessibility Permission Required"
+
+        if binaryChanged {
+            alert.informativeText = """
+            GhostType was updated and needs permission re-granted.
+
+            The old entry in System Settings won't work anymore.
+            You must REMOVE it and add GhostType again:
+
+            1. Go to System Settings > Privacy & Security > Accessibility
+            2. Find GhostType and REMOVE it (select, then click - or press Delete)
+            3. Click + and add GhostType from Applications
+            4. Enable the checkbox
+            """
+        } else {
             alert.informativeText = """
             GhostType needs Accessibility permission to simulate keyboard input.
 
-            Steps:
-            1. Open System Settings > Privacy & Security > Accessibility
-            2. If GhostType is already in the list, REMOVE it first (click -, or select and press Delete)
-            3. Click + and add GhostType from Applications
-            4. Make sure the checkbox is enabled
+            If GhostType already appears in the list but isn't working:
+            REMOVE it and add it again.
 
-            Note: After updates, old entries won't work - you must remove and re-add.
+            1. Go to System Settings > Privacy & Security > Accessibility
+            2. Click + and add GhostType from Applications
+            3. Enable the checkbox
             """
-            alert.alertStyle = .warning
-            alert.addButton(withTitle: "Open System Settings")
-            alert.addButton(withTitle: "Later")
+        }
 
-            let response = alert.runModal()
-            if response == .alertFirstButtonReturn {
-                self.openAccessibilitySettings()
-            }
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "Later")
+
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            openAccessibilitySettings()
         }
     }
 
@@ -115,25 +110,28 @@ class PermissionManager {
 
     /// Manually reset and re-request permissions (called from menu)
     func resetAndRequestPermissions() {
+        // Clear stored hash so next launch shows the dialog
+        UserDefaults.standard.removeObject(forKey: executableHashKey)
+        UserDefaults.standard.removeObject(forKey: permissionShownKey)
+
         let alert = NSAlert()
-        alert.messageText = "Reset Accessibility Permission?"
+        alert.messageText = "Permission Reset"
         alert.informativeText = """
-        This will remove the current accessibility permission entry for GhostType.
+        To fix permissions after an update:
 
-        After resetting, you'll need to grant permission again in System Settings.
-
-        Use this if permissions aren't working after an update.
+        1. Open System Settings > Privacy & Security > Accessibility
+        2. Find GhostType and REMOVE it (click - or press Delete)
+        3. Click + and re-add GhostType from Applications
+        4. Make sure the checkbox is enabled
+        5. Restart GhostType
         """
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: "Reset & Open Settings")
-        alert.addButton(withTitle: "Cancel")
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "Open System Settings")
+        alert.addButton(withTitle: "OK")
 
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {
-            resetAccessibilityPermission()
-            // Clear stored hash so next launch behaves as fresh install
-            UserDefaults.standard.removeObject(forKey: executableHashKey)
-            requestAccessibilityPermission()
+            openAccessibilitySettings()
         }
     }
 }
