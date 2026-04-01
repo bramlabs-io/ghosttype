@@ -3,32 +3,34 @@
 </p>
 
 <p align="center">
-  A macOS menu bar app that captures text from your screen and types it out character-by-character.
+  A sysadmin's dream. Copy and paste text anywhere — even where you can't.
 </p>
 
 <p align="center">
-  You can <a href="https://github.com/bramlabs-io/ghosttype/releases/latest">Download</a> installer from Git Releases.
+  <a href="https://github.com/bramlabs-io/ghosttype/releases/latest">Download</a>
 </p>
 
 ---
 
-## Features
+## Why GhostType?
 
-- **OCR Capture** — Select any area of your screen to extract text using macOS Vision framework
-- **Ghost Typing** — Types out clipboard contents character-by-character instead of pasting
-- **Adjustable Speed** — Choose from multiple typing speeds
-- **Menu Bar App** — Runs quietly in your menu bar
+Ever tried to paste a command into a VM console, remote desktop, or legacy application that doesn't support clipboard sharing? GhostType solves this by simulating real keyboard input — character by character. It also captures text from anywhere on your screen using OCR, so you can "copy" text from images, videos, or unselectable UI elements.
 
 ## Keyboard Shortcuts
 
 |  | Normal | Ghost |
 |--|--------|-------|
-| **Copy** | `Cmd + C` | `Shift + Cmd + C` — OCR capture from screen |
-| **Paste** | `Cmd + V` | `Shift + Cmd + V` — Types out character-by-character |
+| **Copy** | `Cmd + C` — Copies selected text to clipboard | `Shift + Cmd + C` — OCR captures text from screen to clipboard |
+| **Paste** | `Cmd + V` — Pastes from clipboard | `Shift + Cmd + V` — Types clipboard contents using keyboard simulation |
 
 Press `Esc` to stop ghost typing.
 
-Use Ghost Paste when normal paste is blocked or detected.
+## Features
+
+- **OCR Capture** — Select any area of your screen to extract text using macOS Vision framework
+- **Keyboard Simulation** — Types out text character-by-character, works in VMs, remote desktops, and restricted apps
+- **Adjustable Speed** — Choose from multiple typing speeds
+- **Menu Bar App** — Runs quietly in your menu bar
 
 ## Install
 
