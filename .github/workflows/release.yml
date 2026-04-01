@@ -34,6 +34,10 @@ jobs:
           body: |
             ## Install
 
-            Download the `.dmg` file below, open it, and drag GhostType to Applications.
-
-            > Since this app is unsigned, right-click and select "Open" the first time you launch it.
+            1. Download the `.dmg` file below
+            2. Open it and drag GhostType to Applications
+            3. Run this command to remove the quarantine attribute:
+               ```bash
+               xattr -cr /Applications/GhostType.app
+               ```
+            4. Launch GhostType and grant Accessibility permissions when prompted

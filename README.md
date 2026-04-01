@@ -39,7 +39,10 @@ Press `Esc` to stop ghost typing.
 3. Launch GhostType
 4. Grant Accessibility permissions when prompted
 
-> Since this app is unsigned, right-click and select "Open" the first time you launch it.
+> Since this app is unsigned, you need to remove the quarantine attribute after installing:
+> ```bash
+> xattr -cr /Applications/GhostType.app
+> ```
 
 ---
 
