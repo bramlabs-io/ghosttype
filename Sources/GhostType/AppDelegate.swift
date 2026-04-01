@@ -50,23 +50,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func loadIcons() {
-        // Try loading from SPM bundle resources first
         var icon: NSImage?
 
-        if let resourceURL = Bundle.module.url(forResource: "MenuBarIcon", withExtension: "png") {
+        // Try loading from app bundle first (for packaged .app)
+        if let resourceURL = Bundle.main.url(forResource: "MenuBarIcon", withExtension: "png") {
             log("Found icon at: \(resourceURL)")
             icon = NSImage(contentsOf: resourceURL)
             log("Loaded from bundle: \(icon != nil ? "yes, size: \(icon!.size)" : "no")")
-        } else {
-            log("Icon not found in bundle")
         }
 
-        // Fallback: try loading from source directory (for debug builds without bundle)
+        // Fallback: try SPM bundle (for dev mode)
+        if icon == nil, let resourceURL = Bundle.module.url(forResource: "MenuBarIcon", withExtension: "png") {
+            log("Found icon in SPM bundle: \(resourceURL)")
+            icon = NSImage(contentsOf: resourceURL)
+            log("Loaded from SPM bundle: \(icon != nil ? "yes, size: \(icon!.size)" : "no")")
+        }
+
         if icon == nil {
-            let srcPath = "/Users/jimmibram/Projects/ghosttype/Sources/GhostType/Resources/MenuBarIcon.png"
-            log("Trying fallback path: \(srcPath)")
-            icon = NSImage(contentsOfFile: srcPath)
-            log("Loaded from fallback: \(icon != nil ? "yes, size: \(icon!.size)" : "no")")
+            log("Icon not found in any bundle")
         }
 
         if let icon = icon {
