@@ -51,7 +51,7 @@
 
 ```bash
 swift build
-./start.sh
+./startdev.sh
 ```
 
 Runs the debug build directly without creating an app bundle.
